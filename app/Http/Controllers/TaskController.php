@@ -10,10 +10,14 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::all();
-
         return Inertia::render('tasks/Index', [
-            'tasks' => $tasks,
+            'tasks' => fn () => Task::all(),
+    
+            'statistics' => fn () => [
+                'total' => Task::count(),
+                'completed' => Task::where('is_completed', true)->count(),
+                'pending' => Task::where('is_completed', false)->count(),
+            ],
         ]);
     }
     public function store(Request $request)
@@ -27,5 +31,28 @@ class TaskController extends Controller
 
     return redirect()->route('tasks.index');
 }
+
+public function update(Request $request, Task $task)
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+    ]);
+
+    $task->update($validated);
+
+    return redirect()->route('tasks.index');
+}
+
+public function toggle(Task $task)
+{
+    $task->update([
+        'is_completed' => ! $task->is_completed,
+    ]);
+
+    return redirect()->route('tasks.index');
+}
+
+
 }
 

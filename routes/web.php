@@ -12,6 +12,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //post request for show the tasks 
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+
+    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+
+    Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
 });
 
 require __DIR__.'/settings.php';
